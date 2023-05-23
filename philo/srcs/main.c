@@ -3,46 +3,97 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ndiamant <ndiamant@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ndiamant <ndiamant@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/23 09:08:55 by ndiamant          #+#    #+#             */
-/*   Updated: 2023/05/23 13:38:23 by ndiamant         ###   ########.fr       */
+/*   Updated: 2023/05/23 21:46:26 by ndiamant         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philosophers.h"
 
-int	mail = 0;
 pthread_mutex_t	mutex;
 
-void	*ft_thread1(void)
+int	ft_isdigit(int c)
 {
-	int	i = 0;
-	pthread_mutex_lock(&mutex);
-	while (i < 1000000)
+	if (c >= '0' && c <= '9')
+		return (1);
+	return (0);
+}
+
+int	ft_atoi(const char *str)
+{
+	int	sign;
+	int	ret;
+
+	ret = 0;
+	sign = 1;
+	while (*str == '\t' || *str == '\n' || *str == '\v' || *str == '\f' \
+		|| *str == '\r' || *str == ' ')
+		++str;
+	if (*str == '+' || *str == '-')
+		if (*(str++) == '-')
+			sign *= -1;
+	while (ft_isdigit(*str))
 	{
-		mail++;
-		i++;
-	}
+		ret = ret * 10 + sign * (*str - '0');
+		str++;
+	}	
+	return ((int)ret);
+}
+
+void	*ft_thread1(void *arg)
+{
+	int		i;
+	t_philo	*philo;
+
+	philo = (t_philo *)arg;
+	i = 0;
+	pthread_mutex_lock(&mutex);
+	printf("Philo %d is created\n", philo->current);
+	sleep(2);
+	printf("Philo %d is destroyed\n", philo->current);
 	pthread_mutex_unlock(&mutex);
 }
 
-void	*ft_thread2(void)
+void	*ft_philo_eat(void)
 {
+	int	i;
+
+	i = 0;
+	pthread_mutex_lock(&mutex);
+	printf("Philo is eating\n");
+	sleep(2 );
+	printf("Philo is destroyed\n");
+	pthread_mutex_unlock(&mutex);
 }
 
 int	main(int ac, char **av)
 {
-	pthread_t	t1;
-	pthread_t	t2;
+	pthread_t	*thread;
+	t_philo		*philo;
+	t_philo		*tmp;
+	int			i;
 
+	i = 0;
+	thread = malloc(sizeof(pthread_t) * ft_atoi(av[1]));
 	pthread_mutex_init(&mutex, NULL);
 	(void) ac;
-	(void) av;
-	pthread_create(&t1, NULL, &ft_thread1, NULL);
-	pthread_create(&t2, NULL, &ft_thread1, NULL);
-	pthread_join(t1, NULL);
-	pthread_join(t2, NULL);
+	while (i < ft_atoi(av[1]))
+	{
+		tmp = malloc(sizeof(t_philo *));
+		tmp->current = i;
+		pthread_create(&thread[i], NULL, &ft_thread1, (void *)(tmp));
+		printf("Start of thread number %d\n", i);
+		i++;
+	}
+	i = 0;
+	//free(tmp);
+	while (i < ft_atoi(av[1]))
+	{
+		pthread_join(thread[i], NULL);
+		printf("End of thread number %d\n", i);
+		i++;
+	}
 	pthread_mutex_destroy(&mutex);
-	printf("number of mails : %d\n", mail);
 }
