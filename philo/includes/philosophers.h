@@ -6,7 +6,7 @@
 /*   By: ndiamant <ndiamant@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/23 09:09:41 by ndiamant          #+#    #+#             */
-/*   Updated: 2023/05/23 17:50:59 by ndiamant         ###   ########.fr       */
+/*   Updated: 2023/05/25 16:55:52 by ndiamant         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,13 @@
 # include <unistd.h>
 # include <fcntl.h>
 # include <pthread.h>
+# include <string.h>
 
 typedef struct s_philo
 {
 	int		current;
+	char	*forks;
+	char	*philo;
 }t_philo;
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: ndiamant <ndiamant@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/23 09:08:55 by ndiamant          #+#    #+#             */
-/*   Updated: 2023/05/23 21:46:26 by ndiamant         ###   ########.fr       */
+/*   Updated: 2023/05/25 21:10:16 by ndiamant         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ int	ft_atoi(const char *str)
 	return ((int)ret);
 }
 
-void	*ft_thread1(void *arg)
+void	*routine(void *arg)
 {
 	int		i;
 	t_philo	*philo;
@@ -50,40 +50,52 @@ void	*ft_thread1(void *arg)
 	philo = (t_philo *)arg;
 	i = 0;
 	pthread_mutex_lock(&mutex);
-	printf("Philo %d is created\n", philo->current);
-	sleep(2);
-	printf("Philo %d is destroyed\n", philo->current);
-	pthread_mutex_unlock(&mutex);
-}
-
-void	*ft_philo_eat(void)
-{
-	int	i;
-
-	i = 0;
-	pthread_mutex_lock(&mutex);
-	printf("Philo is eating\n");
-	sleep(2 );
-	printf("Philo is destroyed\n");
+	if (philo->forks[philo->current] == 'y' && philo->forks[philo->current + 1] == 'y' && philo->forks)
+	{
+		printf("Philo %d is eating\n", philo->current + 1);
+		philo->forks[philo->current] = 'n';
+		philo->forks[philo->current + 1] = 'n';
+		usleep(20);
+		philo->forks[philo->current] = 'y';
+		philo->forks[philo->current + 1] = 'y';
+		philo->philo[philo->current] = 's';
+	}
+	/*else if (philo->philo[philo->current] == 's')
+	{
+		printf("Philo %d is sleeping\n", philo->current + 1);
+		usleep(20);
+	}
+	else if (philo->philo[philo->current] == 't')
+	{
+		printf("Philo %d is thinking\n", philo->current + 1);
+		usleep(20);
+	}*/
 	pthread_mutex_unlock(&mutex);
 }
 
 int	main(int ac, char **av)
 {
 	pthread_t	*thread;
-	t_philo		*philo;
 	t_philo		*tmp;
 	int			i;
+	char		*forks;
+	char		*philo;
 
 	i = 0;
 	thread = malloc(sizeof(pthread_t) * ft_atoi(av[1]));
+	forks = malloc(sizeof(char) * (ft_atoi(av[1]) + 1));
+	philo = malloc(sizeof(char) * (ft_atoi(av[1]) + 1));
+	memset(forks, 'y', ft_atoi(av[1]));
+	memset(philo, 't', ft_atoi(av[1]));
 	pthread_mutex_init(&mutex, NULL);
 	(void) ac;
 	while (i < ft_atoi(av[1]))
 	{
 		tmp = malloc(sizeof(t_philo *));
 		tmp->current = i;
-		pthread_create(&thread[i], NULL, &ft_thread1, (void *)(tmp));
+		tmp->forks = forks;
+		tmp->philo = philo;
+		pthread_create(&thread[i], NULL, &routine, (void *)(tmp));
 		printf("Start of thread number %d\n", i);
 		i++;
 	}
