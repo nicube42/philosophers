@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philosophers.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ndiamant <ndiamant@student.42lausanne.c    +#+  +:+       +#+        */
+/*   By: ndiamant <ndiamant@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/23 09:09:41 by ndiamant          #+#    #+#             */
-/*   Updated: 2023/05/25 16:55:52 by ndiamant         ###   ########.fr       */
+/*   Updated: 2023/05/26 12:14:44 by ndiamant         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,17 @@
 # include <fcntl.h>
 # include <pthread.h>
 # include <string.h>
+# include <sys/time.h>
 
 typedef struct s_philo
 {
-	int		current;
-	char	*forks;
-	char	*philo;
+	int			current;
+	char		*forks;
+	char		*philo;
+	long int	start_time;
 }t_philo;
+
+int	ft_isdigit(int c);
+int	ft_atoi(const char *str);
 
 #endif

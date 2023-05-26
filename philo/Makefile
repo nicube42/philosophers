@@ -8,7 +8,7 @@ PATH_OBJS =			./objs/
 
 NAME = philo
 
-FILES = $(PATH_SRC)main.c
+FILES = $(PATH_SRC)main.c $(PATH_SRC)not_libft.c
 OBJS = $(patsubst $(PATH_SRC)%.c, $(PATH_OBJS)%.o, $(FILES))
 
 CC = clang
