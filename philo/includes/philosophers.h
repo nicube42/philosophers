@@ -6,7 +6,7 @@
 /*   By: ndiamant <ndiamant@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/23 09:09:41 by ndiamant          #+#    #+#             */
-/*   Updated: 2023/05/26 12:14:44 by ndiamant         ###   ########.fr       */
+/*   Updated: 2023/05/31 15:28:52 by ndiamant         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,24 @@
 
 typedef struct s_philo
 {
+	pthread_t	thread;
 	int			current;
 	char		*forks;
 	char		*philo;
-	long int	start_time;
+	long		start_time;
 }t_philo;
 
-int	ft_isdigit(int c);
-int	ft_atoi(const char *str);
+typedef struct s_env
+{
+	t_philo		*philo;
+
+}t_env;
+
+int		ft_isdigit(int c);
+int		ft_atoi(const char *str);
+
+void	start_thread(char **av, t_philo *philo);
+void	stop_thread(char **av, t_philo *philo);
+void	*routine(void *arg);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: ndiamant <ndiamant@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/23 09:08:55 by ndiamant          #+#    #+#             */
-/*   Updated: 2023/05/26 12:29:55 by ndiamant         ###   ########.fr       */
+/*   Updated: 2023/05/31 15:46:14 by ndiamant         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,12 @@
 
 pthread_mutex_t	mutex;
 
-long int	actual_time(void)
+unsigned long	get_time(void)
 {
-	long int		time;
-	struct timeval	current_time;
+	struct timeval	time;
 
-	time = 0;
-	if (gettimeofday(&current_time, NULL) == -1)
-		exit(1);
-	time = (current_time.tv_sec * 1000) + (current_time.tv_usec / 1000);
-	return (time);
+	gettimeofday(&time, NULL);
+	return ((time.tv_sec * (unsigned long)1000) + (time.tv_usec / 1000));
 }
 
 void	philo_eating(t_philo *philo)
@@ -33,8 +29,7 @@ void	philo_eating(t_philo *philo)
 		printf("Philo %d is eating\n", philo->current + 1);
 		philo->forks[philo->current] = 'n';
 		philo->forks[philo->current + 1] = 'n';
-		usleep(20);
-		//printf("%ld\n", (philo->start_time - actual_time()));
+		usleep(2000);
 		philo->forks[philo->current] = 'y';
 		philo->forks[philo->current + 1] = 'y';
 		philo->philo[philo->current] = 's';
@@ -47,60 +42,27 @@ void	*routine(void *arg)
 
 	philo = (t_philo *)arg;
 	pthread_mutex_lock(&mutex);
-	philo_eating(philo);
-	if (philo->philo[philo->current] == 's')
-	{
-		printf("Philo %d is sleeping\n", philo->current + 1);
-		usleep(20);
-	}
 	if (philo->philo[philo->current] == 't')
-	{
-		printf("Philo %d is thinking\n", philo->current + 1);
-		usleep(20);
-	}
+		philo_eating(philo);
+	printf("philo %d status %s\n", philo->current + 1, philo->philo);
 	pthread_mutex_unlock(&mutex);
+	return (NULL);
 }
 
 int	main(int ac, char **av)
 {
-	pthread_t	*thread;
-	t_philo		*tmp;
+	t_philo		*philo;
+	t_env		*env;
+	pthread_t	thread;
 	int			i;
-	char		*forks;
-	char		*philo;
 
 	i = 0;
-	thread = malloc(sizeof(pthread_t) * ft_atoi(av[1]));
-	forks = malloc(sizeof(char) * (ft_atoi(av[1]) + 1));
-	philo = malloc(sizeof(char) * (ft_atoi(av[1]) + 1));
-	memset(forks, 'y', ft_atoi(av[1]));
-	memset(philo, 't', ft_atoi(av[1]));
-	forks[ft_atoi(av[1])] = 0;
-	philo[ft_atoi(av[1])] = 0;
+	philo = malloc(sizeof(t_philo) * ft_atoi(av[1]));
+	philo->start_time = get_time();
 	pthread_mutex_init(&mutex, NULL);
 	(void) ac;
-	tmp = malloc(sizeof(t_philo *));
-	tmp->forks = forks;
-	tmp->philo = philo;
-	while (i < ft_atoi(av[1]))
-	{
-		forks = tmp->forks;
-		philo = tmp->philo;
-		tmp = malloc(sizeof(t_philo *));
-		tmp->current = i;
-		tmp->forks = forks;
-		//tmp->philo = philo;
-		pthread_create(&thread[i], NULL, &routine, (void *)(tmp));
-		printf("Start of thread number %d\n", i);
-		i++;
-	}
+	start_thread(av, philo);
 	i = 0;
-	//free(tmp);
-	while (i < ft_atoi(av[1]))
-	{
-		pthread_join(thread[i], NULL);
-		//printf("End of thread number %d\n", i);
-		i++;
-	}
+	stop_thread(av, philo);
 	pthread_mutex_destroy(&mutex);
 }
