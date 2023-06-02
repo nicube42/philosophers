@@ -12,6 +12,19 @@
 
 #include "../includes/philosophers.h"
 
+void check_death(t_philo *philo)
+{
+  while (philo[current]->current_meal)
+		{
+			 if (all philo not dead)
+				  return ;
+			 if (philo[current]->current_meal < philo->env->max_meal)
+				  return ;
+				current++;
+		}
+		philo->env->check_death = 1;
+}
+
 void	start_thread(char **av, t_philo *philo, t_env *env)
 {
 	int	i;
