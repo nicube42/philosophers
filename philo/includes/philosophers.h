@@ -6,7 +6,7 @@
 /*   By: ndiamant <ndiamant@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/23 09:09:41 by ndiamant          #+#    #+#             */
-/*   Updated: 2023/05/31 15:28:52 by ndiamant         ###   ########.fr       */
+/*   Updated: 2023/06/02 15:14:03 by ndiamant         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,26 +25,47 @@
 # include <string.h>
 # include <sys/time.h>
 
-typedef struct s_philo
-{
-	pthread_t	thread;
-	int			current;
-	char		*forks;
-	char		*philo;
-	long		start_time;
-}t_philo;
-
 typedef struct s_env
 {
-	t_philo		*philo;
-
+	pthread_mutex_t	mutex_current;
+	pthread_mutex_t	mutex_philo;
+	pthread_mutex_t	*mutex_fork;
+	long			start_time;
+	int				sleep_time;
+	int				diner_time;
+	unsigned long	time_to_die;
+	unsigned long	last_ate;
+	int				meal_count;
+	int				meal_max;
+	int				check_death;
 }t_env;
 
-int		ft_isdigit(int c);
-int		ft_atoi(const char *str);
+typedef struct s_philo
+{
+	t_env			*env;
+	pthread_t		thread;
+	int				current;
+	char			*forks;
+	char			*philo;
+}t_philo;
 
-void	start_thread(char **av, t_philo *philo);
-void	stop_thread(char **av, t_philo *philo);
-void	*routine(void *arg);
+int				ft_isdigit(int c);
+int				ft_atoi(const char *str);
+
+void			start_thread(char **av, t_philo *philo, t_env *env);
+void			stop_thread(char **av, t_philo *philo);
+void			init_mutex(t_env *env, char **av);
+void			destroy_mutex(t_env *env, char **av);
+
+void			*routine(void *arg);
+
+unsigned long	get_time(void);
+void			print(char *error, t_philo *philo);
+
+void			*routine(void *arg);
+
+int				init_values(t_env *env, char **av);
+void			error(char *err_message, t_philo *philo, t_env *env);
+int				check_errors(char **av, t_philo *philo, t_env *env);
 
 #endif
