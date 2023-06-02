@@ -6,7 +6,7 @@
 /*   By: ndiamant <ndiamant@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/23 09:09:41 by ndiamant          #+#    #+#             */
-/*   Updated: 2023/06/02 15:14:03 by ndiamant         ###   ########.fr       */
+/*   Updated: 2023/06/02 17:27:25 by ndiamant         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,11 +25,15 @@
 # include <string.h>
 # include <sys/time.h>
 
+struct	s_philo;
+
 typedef struct s_env
 {
+	struct s_philo	*philo;
 	pthread_mutex_t	mutex_current;
 	pthread_mutex_t	mutex_philo;
 	pthread_mutex_t	*mutex_fork;
+	pthread_mutex_t	mutex_check;
 	long			start_time;
 	int				sleep_time;
 	int				diner_time;
@@ -64,8 +68,8 @@ void			print(char *error, t_philo *philo);
 
 void			*routine(void *arg);
 
-int				init_values(t_env *env, char **av);
+int				init_values(t_env *env, char **av, int ac);
 void			error(char *err_message, t_philo *philo, t_env *env);
-int				check_errors(char **av, t_philo *philo, t_env *env);
+int				check_errors(char **av, t_philo *philo, t_env *env, int ac);
 
 #endif

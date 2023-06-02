@@ -6,21 +6,11 @@
 /*   By: ndiamant <ndiamant@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/31 15:27:50 by ndiamant          #+#    #+#             */
-/*   Updated: 2023/06/02 15:22:18 by ndiamant         ###   ########.fr       */
+/*   Updated: 2023/06/02 17:18:10 by ndiamant         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philosophers.h"
-
-void	check_death(t_philo *philo)
-{
-	printf("%ld\n", philo->env->last_ate);
-	if (philo->env->time_to_die <= get_time() - philo->env->last_ate)
-	{
-		print("died", philo);
-		philo->env->check_death = 1;
-	}
-}
 
 void	start_thread(char **av, t_philo *philo, t_env *env)
 {
@@ -37,8 +27,8 @@ void	start_thread(char **av, t_philo *philo, t_env *env)
 		pthread_create(&philo[i].thread, NULL, &routine, &philo[i]);
 		i++;
 	}
-	//while (philo->env->check_death != 1)
-	//	check_death(&philo[i]);
+	//while (philo->env->check_death == 0)
+		//check_death(philo);
 }
 
 void	stop_thread(char **av, t_philo *philo)
@@ -58,6 +48,7 @@ void	init_mutex(t_env *env, char **av)
 	int	i;
 
 	i = 0;
+	pthread_mutex_init(&env->mutex_check, NULL);
 	pthread_mutex_init(&env->mutex_philo, NULL);
 	pthread_mutex_init(&env->mutex_current, NULL);
 	while (i < ft_atoi(av[1]))
@@ -79,4 +70,5 @@ void	destroy_mutex(t_env *env, char **av)
 		i++;
 	}
 	pthread_mutex_destroy(&env->mutex_philo);
+	pthread_mutex_destroy(&env->mutex_check);
 }

@@ -6,7 +6,7 @@
 /*   By: ndiamant <ndiamant@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/23 09:08:55 by ndiamant          #+#    #+#             */
-/*   Updated: 2023/06/02 14:17:47 by ndiamant         ###   ########.fr       */
+/*   Updated: 2023/06/02 17:27:15 by ndiamant         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int	main(int ac, char **av)
 		printf("Malloc error");
 		return (1);
 	}
-	if (check_errors(av, philo, env))
+	if (check_errors(av, philo, env, ac))
 		return (1);
 	init_mutex(env, av);
 	start_thread(av, philo, env);
