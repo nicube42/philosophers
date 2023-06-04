@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_behavior.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ndiamant <ndiamant@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ndiamant <ndiamant@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 13:27:59 by ndiamant          #+#    #+#             */
-/*   Updated: 2023/06/02 18:33:38 by ndiamant         ###   ########.fr       */
+/*   Updated: 2023/06/04 15:16:59 by ndiamant         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,19 +23,20 @@ static void	philo_eating(t_philo *philo)
 		fork = 0;
 	pthread_mutex_lock(&(philo->env->mutex_fork[philo->current]));
 	print("has taken a fork", philo);
-	if (fork != 0)
-	{
+	//if (fork != 0)
+	//{
 		pthread_mutex_lock(&(philo->env->mutex_fork[fork]));
 		print("has taken a fork", philo);
 		print("is eating", philo);
 		usleep(philo->env->diner_time * 1000);
 		pthread_mutex_lock(&philo->env->mutex_philo);
-		philo->env->meal_count++;
-		philo->env->last_ate = get_time();
+		philo->meal_count += 1;
+		printf("%d of %d\n", philo->meal_count, philo->current);
+		philo->last_ate = get_time();
 		pthread_mutex_unlock(&philo->env->mutex_philo);
 		pthread_mutex_unlock(&(philo->env->mutex_fork[fork]));
-	}
 	pthread_mutex_unlock(&(philo->env->mutex_fork[philo->current]));
+	//}
 }
 
 static void	philo_sleeping(t_philo *philo)
@@ -62,9 +63,12 @@ void	*routine(void *arg)
 	philo = (t_philo *)arg;
 	if (philo->current % 2)
 		usleep (1500);
-	if (philo->env->check_death == 0)
-		philo_eating(philo);
-	philo_sleeping(philo);
-	philo_thinking(philo);
+	while(philo->env->check_death == 0)
+	{
+		if (philo->env->check_death == 0)
+			philo_eating(philo);
+		philo_sleeping(philo);
+		philo_thinking(philo);
+	}
 	return (NULL);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philosophers.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ndiamant <ndiamant@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ndiamant <ndiamant@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/23 09:09:41 by ndiamant          #+#    #+#             */
-/*   Updated: 2023/06/02 17:27:25 by ndiamant         ###   ########.fr       */
+/*   Updated: 2023/06/04 14:31:24 by ndiamant         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,12 +34,11 @@ typedef struct s_env
 	pthread_mutex_t	mutex_philo;
 	pthread_mutex_t	*mutex_fork;
 	pthread_mutex_t	mutex_check;
+	int				philo_num;
 	long			start_time;
 	int				sleep_time;
 	int				diner_time;
 	unsigned long	time_to_die;
-	unsigned long	last_ate;
-	int				meal_count;
 	int				meal_max;
 	int				check_death;
 }t_env;
@@ -48,6 +47,8 @@ typedef struct s_philo
 {
 	t_env			*env;
 	pthread_t		thread;
+	int				meal_count;
+	unsigned long	last_ate;
 	int				current;
 	char			*forks;
 	char			*philo;
@@ -57,7 +58,7 @@ int				ft_isdigit(int c);
 int				ft_atoi(const char *str);
 
 void			start_thread(char **av, t_philo *philo, t_env *env);
-void			stop_thread(char **av, t_philo *philo);
+void			stop_thread(char **av, t_env *env);
 void			init_mutex(t_env *env, char **av);
 void			destroy_mutex(t_env *env, char **av);
 

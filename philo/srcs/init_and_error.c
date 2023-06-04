@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_and_error.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ndiamant <ndiamant@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ndiamant <ndiamant@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 14:17:34 by ndiamant          #+#    #+#             */
-/*   Updated: 2023/06/02 17:28:52 by ndiamant         ###   ########.fr       */
+/*   Updated: 2023/06/04 14:58:23 by ndiamant         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,15 +18,14 @@ int	init_values(t_env *env, char **av, int ac)
 	if (!env->mutex_fork)
 		return (0);
 	env->start_time = get_time();
+	env->philo_num = ft_atoi(av[1]);
 	env->time_to_die = ft_atoi(av[2]);
 	env->sleep_time = ft_atoi(av[3]);
 	env->diner_time = ft_atoi(av[4]);
-	env->last_ate = 0;
 	if (ac == 6)
 		env->meal_max = ft_atoi(av[5]);
 	else
 		env->meal_max = MAX_INT;
-	env->meal_count = 0;
 	env->check_death = 0;
 	return (1);
 }
@@ -38,8 +37,8 @@ void	error(char *err_message, t_philo *philo, t_env *env)
 		free(env->mutex_fork);
 	if (env)
 		free(env);
-	if (philo)
-		free(philo);
+	if (env->philo)
+		free(env->philo);
 }
 
 int	check_errors(char **av, t_philo *philo, t_env *env, int ac)

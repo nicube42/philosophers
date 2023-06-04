@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ndiamant <ndiamant@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ndiamant <ndiamant@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/23 09:08:55 by ndiamant          #+#    #+#             */
-/*   Updated: 2023/06/02 17:27:15 by ndiamant         ###   ########.fr       */
+/*   Updated: 2023/06/04 14:58:21 by ndiamant         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,9 @@ int	main(int ac, char **av)
 		printf("Enter 4 or 5 args\n");
 		return (1);
 	}
-	philo = malloc(sizeof(t_philo) * ft_atoi(av[1]));
 	env = malloc(sizeof(t_env));
-	if (!philo || !env)
+	env->philo = malloc(sizeof(t_philo) * ft_atoi(av[1]));
+	if (!env->philo || !env)
 	{
 		printf("Malloc error");
 		return (1);
@@ -35,7 +35,7 @@ int	main(int ac, char **av)
 		return (1);
 	init_mutex(env, av);
 	start_thread(av, philo, env);
-	stop_thread(av, philo);
+	stop_thread(av, env);
 	destroy_mutex(env, av);
 	return (0);
 }
