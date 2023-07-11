@@ -6,7 +6,7 @@
 /*   By: ndiamant <ndiamant@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/23 09:09:41 by ndiamant          #+#    #+#             */
-/*   Updated: 2023/07/11 16:12:38 by ndiamant         ###   ########.fr       */
+/*   Updated: 2023/07/11 23:37:23 by ndiamant         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ struct	s_philo;
 typedef struct s_env
 {
 	struct s_philo	*philo;
-	pthread_mutex_t	mutex_current;
+	pthread_mutex_t	mutex_philo;
 	pthread_mutex_t	*mutex_fork;
 	pthread_mutex_t	mutex_check;
 	int				philo_num;

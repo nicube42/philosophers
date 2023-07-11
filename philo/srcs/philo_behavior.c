@@ -6,7 +6,7 @@
 /*   By: ndiamant <ndiamant@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 13:27:59 by ndiamant          #+#    #+#             */
-/*   Updated: 2023/07/11 18:30:56 by ndiamant         ###   ########.fr       */
+/*   Updated: 2023/07/11 23:39:50 by ndiamant         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,12 @@ static void	take_fork(t_philo *philo)
 static void	philo_eating(t_philo *philo)
 {
 	take_fork(philo);
+	pthread_mutex_lock(&philo->mutex_philo);
 	print("is eating", philo);
 	usleep(philo->env->diner_time * 1000);
 	philo->last_ate = get_time();
 	philo->meal_count += 1;
+	pthread_mutex_unlock(&philo->mutex_philo);
 	drop_fork(philo);
 }
 
@@ -50,7 +52,6 @@ void	*routine(void *arg)
 	t_philo	*philo;
 
 	philo = (t_philo *)arg;
-	pthread_mutex_lock(&philo->mutex_philo);
 	printf("thread %d\n", philo->current + 1);
 	if (philo->current % 2)
 		usleep (1500);
@@ -62,6 +63,5 @@ void	*routine(void *arg)
 		if (philo->env->check_death == 0)
 			print("is thinking", philo);
 	}
-	pthread_mutex_unlock(&philo->mutex_philo);
 	return (NULL);
 }
