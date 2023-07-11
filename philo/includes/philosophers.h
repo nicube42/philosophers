@@ -6,7 +6,7 @@
 /*   By: ndiamant <ndiamant@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/23 09:09:41 by ndiamant          #+#    #+#             */
-/*   Updated: 2023/06/04 14:31:24 by ndiamant         ###   ########.fr       */
+/*   Updated: 2023/07/11 16:12:38 by ndiamant         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@ typedef struct s_env
 {
 	struct s_philo	*philo;
 	pthread_mutex_t	mutex_current;
-	pthread_mutex_t	mutex_philo;
 	pthread_mutex_t	*mutex_fork;
 	pthread_mutex_t	mutex_check;
 	int				philo_num;
@@ -40,6 +39,7 @@ typedef struct s_env
 	int				diner_time;
 	unsigned long	time_to_die;
 	int				meal_max;
+	int				meal_left;
 	int				check_death;
 }t_env;
 
@@ -50,7 +50,9 @@ typedef struct s_philo
 	int				meal_count;
 	unsigned long	last_ate;
 	int				current;
-	char			*forks;
+	pthread_mutex_t	*r_fork;
+	pthread_mutex_t *l_fork;
+	pthread_mutex_t *mutex_philo;
 	char			*philo;
 }t_philo;
 

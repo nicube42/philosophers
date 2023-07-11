@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ndiamant <ndiamant@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ndiamant <ndiamant@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 13:28:57 by ndiamant          #+#    #+#             */
-/*   Updated: 2023/06/02 13:29:14 by ndiamant         ###   ########.fr       */
+/*   Updated: 2023/07/11 12:57:20 by ndiamant         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,6 @@ unsigned long	get_time(void)
 
 void	print(char *error, t_philo *philo)
 {
-	pthread_mutex_lock(&(philo->env->mutex_philo));
 	printf("%ld %d %s\n", get_time()
 		- philo->env->start_time, philo->current + 1, error);
-	pthread_mutex_unlock(&(philo->env->mutex_philo));
 }

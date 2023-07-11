@@ -6,7 +6,7 @@
 /*   By: ndiamant <ndiamant@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 14:17:34 by ndiamant          #+#    #+#             */
-/*   Updated: 2023/06/04 14:58:23 by ndiamant         ###   ########.fr       */
+/*   Updated: 2023/07/11 19:45:27 by ndiamant         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,10 @@
 int	init_values(t_env *env, char **av, int ac)
 {
 	env->mutex_fork = malloc(sizeof(pthread_mutex_t) * ft_atoi(av[1]));
+	env->philo->mutex_philo = malloc(sizeof(pthread_mutex_t) * ft_atoi(av[1]));
+	env->mutex_fork = malloc(sizeof(pthread_mutex_t) * ft_atoi(av[1]));
+	env->philo->l_fork = malloc(sizeof(pthread_mutex_t) * ft_atoi(av[1]));
+	env->philo->r_fork = malloc(sizeof(pthread_mutex_t) * ft_atoi(av[1]));
 	if (!env->mutex_fork)
 		return (0);
 	env->start_time = get_time();
@@ -23,7 +27,10 @@ int	init_values(t_env *env, char **av, int ac)
 	env->sleep_time = ft_atoi(av[3]);
 	env->diner_time = ft_atoi(av[4]);
 	if (ac == 6)
+	{
 		env->meal_max = ft_atoi(av[5]);
+		env->meal_left = ft_atoi(av[5]);
+	}
 	else
 		env->meal_max = MAX_INT;
 	env->check_death = 0;

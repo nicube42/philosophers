@@ -6,37 +6,34 @@
 /*   By: ndiamant <ndiamant@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 13:27:59 by ndiamant          #+#    #+#             */
-/*   Updated: 2023/06/04 15:16:59 by ndiamant         ###   ########.fr       */
+/*   Updated: 2023/07/11 18:30:56 by ndiamant         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philosophers.h"
 
+static void	drop_fork(t_philo *philo)
+{
+	pthread_mutex_unlock(&philo->l_fork);
+	pthread_mutex_unlock(&philo->r_fork);
+}
+
+static void	take_fork(t_philo *philo)
+{
+	pthread_mutex_lock(&philo->r_fork);
+	print("has taken a fork", philo);
+	pthread_mutex_lock(&philo->l_fork);
+	print("has taken a fork", philo);
+}
+
 static void	philo_eating(t_philo *philo)
 {
-	int	fork;
-
-	fork = -1;
-	if (philo->forks[philo->current + 1] != 0)
-		fork = philo->current + 1;
-	else
-		fork = 0;
-	pthread_mutex_lock(&(philo->env->mutex_fork[philo->current]));
-	print("has taken a fork", philo);
-	//if (fork != 0)
-	//{
-		pthread_mutex_lock(&(philo->env->mutex_fork[fork]));
-		print("has taken a fork", philo);
-		print("is eating", philo);
-		usleep(philo->env->diner_time * 1000);
-		pthread_mutex_lock(&philo->env->mutex_philo);
-		philo->meal_count += 1;
-		printf("%d of %d\n", philo->meal_count, philo->current);
-		philo->last_ate = get_time();
-		pthread_mutex_unlock(&philo->env->mutex_philo);
-		pthread_mutex_unlock(&(philo->env->mutex_fork[fork]));
-	pthread_mutex_unlock(&(philo->env->mutex_fork[philo->current]));
-	//}
+	take_fork(philo);
+	print("is eating", philo);
+	usleep(philo->env->diner_time * 1000);
+	philo->last_ate = get_time();
+	philo->meal_count += 1;
+	drop_fork(philo);
 }
 
 static void	philo_sleeping(t_philo *philo)
@@ -48,27 +45,23 @@ static void	philo_sleeping(t_philo *philo)
 	}
 }
 
-static void	philo_thinking(t_philo *philo)
-{
-	if (philo->env->check_death == 0)
-	{
-		print("is thinking", philo);
-	}
-}
-
 void	*routine(void *arg)
 {
 	t_philo	*philo;
 
 	philo = (t_philo *)arg;
+	pthread_mutex_lock(&philo->mutex_philo);
+	printf("thread %d\n", philo->current + 1);
 	if (philo->current % 2)
 		usleep (1500);
-	while(philo->env->check_death == 0)
+	while (philo->env->check_death == 0)
 	{
+		philo_eating(philo);
 		if (philo->env->check_death == 0)
-			philo_eating(philo);
-		philo_sleeping(philo);
-		philo_thinking(philo);
+			philo_sleeping(philo);
+		if (philo->env->check_death == 0)
+			print("is thinking", philo);
 	}
+	pthread_mutex_unlock(&philo->mutex_philo);
 	return (NULL);
 }
