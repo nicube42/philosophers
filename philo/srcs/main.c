@@ -6,20 +6,49 @@
 /*   By: ndiamant <ndiamant@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/23 09:08:55 by ndiamant          #+#    #+#             */
-/*   Updated: 2023/07/11 23:37:25 by ndiamant         ###   ########.fr       */
+/*   Updated: 2023/07/12 19:16:59 by ndiamant         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philosophers.h"
 
-int	check_params(int ac, char **av, t_env *env)
+static int	is_input_numbers(int ac, char **av)
 {
+	int	i;
+	int	j;
+
+	j = 1;
+	while (j < ac)
+	{
+		i = 0;
+		while (av[j][i])
+		{
+			if (!ft_isdigit((int)av[j][i]))
+			{
+				printf("Only enter a number\n");
+				return (1);
+			}
+			i++;
+		}
+		j++;
+	}
+	return (0);
+}
+
+static int	check_params(int ac, char **av)
+{
+	int	i;
+
+	i = 0;
 	if (ac < 5 || ac > 6)
 	{
 		printf("Enter 4 or 5 args\n");
 		return (1);
 	}
-	if (ft_atoi(av[1]) < 0 || ft_atoi(av[2]) < 0 || ft_atoi(av[3]) < 0 || ft_atoi(av[4]) < 0)
+	if (is_input_numbers(ac, av))
+		return (1);
+	if (ft_atoi(av[1]) < 0 || ft_atoi(av[2]) < 0
+		|| ft_atoi(av[3]) < 0 || ft_atoi(av[4]) < 0)
 	{
 		printf("Input can't be negative\n");
 		return (1);
@@ -42,19 +71,19 @@ int	main(int ac, char **av)
 
 	env = NULL;
 	philo = NULL;
-	if (check_params(ac, av, env))
+	if (check_params(ac, av))
 		return (1);
 	env = malloc(sizeof(t_env));
 	env->philo = malloc(sizeof(t_philo) * ft_atoi(av[1]));
 	if (!env->philo || !env)
 	{
-		printf("Malloc error");
+		error("Malloc error", env);
 		return (1);
 	}
-	if (check_errors(av, philo, env, ac))
+	if (check_errors(av, env, ac))
 		return (1);
 	init_mutex(env, av);
-	start_thread(av, philo, env);
+	start_thread(av, env);
 	stop_thread(av, env);
 	destroy_mutex(env, av);
 	return (0);

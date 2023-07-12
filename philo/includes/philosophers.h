@@ -6,7 +6,7 @@
 /*   By: ndiamant <ndiamant@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/23 09:09:41 by ndiamant          #+#    #+#             */
-/*   Updated: 2023/07/11 23:37:23 by ndiamant         ###   ########.fr       */
+/*   Updated: 2023/07/12 18:57:18 by ndiamant         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ struct	s_philo;
 typedef struct s_env
 {
 	struct s_philo	*philo;
-	pthread_mutex_t	mutex_philo;
 	pthread_mutex_t	*mutex_fork;
 	pthread_mutex_t	mutex_check;
 	int				philo_num;
@@ -47,19 +46,20 @@ typedef struct s_philo
 {
 	t_env			*env;
 	pthread_t		thread;
+	int				is_eating;
+	int				full_meal;
 	int				meal_count;
 	unsigned long	last_ate;
 	int				current;
 	pthread_mutex_t	*r_fork;
-	pthread_mutex_t *l_fork;
-	pthread_mutex_t *mutex_philo;
-	char			*philo;
+	pthread_mutex_t	*l_fork;
+	pthread_mutex_t	mutex_philo;
 }t_philo;
 
 int				ft_isdigit(int c);
 int				ft_atoi(const char *str);
 
-void			start_thread(char **av, t_philo *philo, t_env *env);
+void			start_thread(char **av, t_env *env);
 void			stop_thread(char **av, t_env *env);
 void			init_mutex(t_env *env, char **av);
 void			destroy_mutex(t_env *env, char **av);
@@ -68,11 +68,13 @@ void			*routine(void *arg);
 
 unsigned long	get_time(void);
 void			print(char *error, t_philo *philo);
+int				ft_usleep(useconds_t time);
 
 void			*routine(void *arg);
 
 int				init_values(t_env *env, char **av, int ac);
-void			error(char *err_message, t_philo *philo, t_env *env);
-int				check_errors(char **av, t_philo *philo, t_env *env, int ac);
+void			error(char *err_message, t_env *env);
+int				check_errors(char **av, t_env *env, int ac);
+void			free_all(t_env *env);
 
 #endif

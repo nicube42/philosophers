@@ -12,7 +12,7 @@ FILES = $(PATH_SRC)main.c $(PATH_SRC)not_libft.c $(PATH_SRC)threads_control.c $(
 OBJS = $(patsubst $(PATH_SRC)%.c, $(PATH_OBJS)%.o, $(FILES))
 
 CC = clang
-CFLAGS = -Wall -Wextra -pthread #-fsanitize=thread -g3 -O1
+CFLAGS = -Wall -Wextra -Werror -pthread #-fsanitize=thread -g3 -O1
 RM = rm -rf
 
 all: logo $(NAME)
