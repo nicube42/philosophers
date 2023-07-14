@@ -6,7 +6,7 @@
 /*   By: ndiamant <ndiamant@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/23 09:09:41 by ndiamant          #+#    #+#             */
-/*   Updated: 2023/07/12 18:57:18 by ndiamant         ###   ########.fr       */
+/*   Updated: 2023/07/14 13:39:29 by ndiamant         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,12 @@ struct	s_philo;
 typedef struct s_env
 {
 	struct s_philo	*philo;
+	pthread_t		monitor_t;
 	pthread_mutex_t	*mutex_fork;
 	pthread_mutex_t	mutex_check;
+	pthread_mutex_t	mutex_print;
+	int				forks_taken;
+	int				full_meal;
 	int				philo_num;
 	long			start_time;
 	int				sleep_time;
@@ -46,8 +50,9 @@ typedef struct s_philo
 {
 	t_env			*env;
 	pthread_t		thread;
+	pthread_t		supervisor;
+	int				dead;
 	int				is_eating;
-	int				full_meal;
 	int				meal_count;
 	unsigned long	last_ate;
 	int				current;
@@ -58,13 +63,23 @@ typedef struct s_philo
 
 int				ft_isdigit(int c);
 int				ft_atoi(const char *str);
+int				ft_strncmp(const char *s1, const char *s2, size_t n);
 
-void			start_thread(char **av, t_env *env);
-void			stop_thread(char **av, t_env *env);
-void			init_mutex(t_env *env, char **av);
-void			destroy_mutex(t_env *env, char **av);
+int				start_thread(char **av, t_env *env);
+int				stop_thread(char **av, t_env *env);
+int				init_mutex(t_env *env, char **av);
+int				destroy_mutex(t_env *env, char **av);
 
 void			*routine(void *arg);
+void			*supervisor(void *arg);
+void			*monitor(void *arg);
+
+void			philo_eating(t_philo *philo);
+void			take_fork(t_philo *philo);
+void			drop_fork(t_philo *philo);
+
+void			check_all_meal(t_philo *philo);
+void			handle_forks_pointers(t_env *env, int philo_num);
 
 unsigned long	get_time(void);
 void			print(char *error, t_philo *philo);

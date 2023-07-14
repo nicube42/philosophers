@@ -6,7 +6,7 @@
 /*   By: ndiamant <ndiamant@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/23 09:08:55 by ndiamant          #+#    #+#             */
-/*   Updated: 2023/07/12 19:16:59 by ndiamant         ###   ########.fr       */
+/*   Updated: 2023/07/14 14:37:55 by ndiamant         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,34 @@ static int	check_params(int ac, char **av)
 	return (0);
 }
 
+static int	general_thread(char **av, t_env *env)
+{
+	if (init_mutex(env, av))
+	{
+		error("Mutex init error", env);
+		return (1);
+	}
+	if (start_thread(av, env))
+	{
+		error("Thread init error", env);
+		return (1);
+	}
+	if (env->philo_num != 1)
+	{
+		if (stop_thread(av, env))
+		{
+			error("Thread stopping error", env);
+			return (1);
+		}
+		if (destroy_mutex(env, av))
+		{
+			error("Mutex destroy error", env);
+			return (1);
+		}
+	}
+	return (0);
+}
+
 int	main(int ac, char **av)
 {
 	t_env		*env;
@@ -82,9 +110,7 @@ int	main(int ac, char **av)
 	}
 	if (check_errors(av, env, ac))
 		return (1);
-	init_mutex(env, av);
-	start_thread(av, env);
-	stop_thread(av, env);
-	destroy_mutex(env, av);
+	if (general_thread(av, env))
+		return (1);
 	return (0);
 }

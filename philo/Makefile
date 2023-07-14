@@ -8,11 +8,11 @@ PATH_OBJS =			./objs/
 
 NAME = philo
 
-FILES = $(PATH_SRC)main.c $(PATH_SRC)not_libft.c $(PATH_SRC)threads_control.c $(PATH_SRC)philo_behavior.c $(PATH_SRC)utils.c $(PATH_SRC)init_and_error.c
+FILES = $(PATH_SRC)main.c $(PATH_SRC)not_libft.c $(PATH_SRC)threads_control.c $(PATH_SRC)philo_behavior.c $(PATH_SRC)utils.c $(PATH_SRC)init_and_error.c $(PATH_SRC)threads_control2.c
 OBJS = $(patsubst $(PATH_SRC)%.c, $(PATH_OBJS)%.o, $(FILES))
 
 CC = clang
-CFLAGS = -Wall -Wextra -Werror -pthread #-fsanitize=thread -g3 -O1
+CFLAGS = -Wall -Wextra -Werror -pthread -fsanitize=thread -g3 -O1
 RM = rm -rf
 
 all: logo $(NAME)

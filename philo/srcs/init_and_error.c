@@ -6,7 +6,7 @@
 /*   By: ndiamant <ndiamant@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 14:17:34 by ndiamant          #+#    #+#             */
-/*   Updated: 2023/07/12 18:53:42 by ndiamant         ###   ########.fr       */
+/*   Updated: 2023/07/14 10:03:39 by ndiamant         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,9 @@ int	init_values(t_env *env, char **av, int ac)
 	env->time_to_die = ft_atoi(av[2]);
 	env->diner_time = ft_atoi(av[3]);
 	env->sleep_time = ft_atoi(av[4]);
+	env->full_meal = 0;
+	env->forks_taken = 0;
+	env->check_death = 0;
 	if (ac == 6)
 	{
 		env->meal_max = ft_atoi(av[5]);
@@ -29,10 +32,9 @@ int	init_values(t_env *env, char **av, int ac)
 	}
 	else
 	{
-		env->meal_max = MAX_INT;
-		env->meal_left = MAX_INT;
+		env->meal_max = 0;
+		env->meal_left = 0;
 	}
-	env->check_death = 0;
 	return (1);
 }
 

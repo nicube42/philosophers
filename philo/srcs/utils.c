@@ -6,7 +6,7 @@
 /*   By: ndiamant <ndiamant@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 13:28:57 by ndiamant          #+#    #+#             */
-/*   Updated: 2023/07/12 19:06:30 by ndiamant         ###   ########.fr       */
+/*   Updated: 2023/07/14 13:03:45 by ndiamant         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,12 @@ unsigned long	get_time(void)
 
 void	print(char *error, t_philo *philo)
 {
-	printf("%ld %d %s\n", get_time()
-		- philo->env->start_time, philo->current + 1, error);
+	pthread_mutex_lock(&philo->env->mutex_print);
+	if ((philo->env->check_death == 0 || !ft_strncmp(error, "is eating", 9))
+		|| !ft_strncmp(error, "died", 4))
+		printf("%ld %d %s\n", get_time() - philo->env->start_time, philo->current
+			+ 1, error);
+	pthread_mutex_unlock(&philo->env->mutex_print);
 }
 
 int	ft_usleep(useconds_t time)

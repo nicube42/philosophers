@@ -6,107 +6,111 @@
 /*   By: ndiamant <ndiamant@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/31 15:27:50 by ndiamant          #+#    #+#             */
-/*   Updated: 2023/07/12 18:55:45 by ndiamant         ###   ########.fr       */
+/*   Updated: 2023/07/14 14:43:05 by ndiamant         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philosophers.h"
 
-void	check_death(t_env *env)
+void	init_thread_content(char **av, t_env *env)
 {
 	int	i;
 
 	i = 0;
-	env->meal_left = env->philo_num * env->meal_max;
-	while (i < env->philo_num)
-	{
-		pthread_mutex_lock(&env->mutex_check);
-		if (env->philo[i].full_meal == 1)
-			env->meal_left -= 1;
-		if (env->meal_left == 0)
-		{
-			env->check_death = 1;
-			pthread_mutex_unlock(&env->mutex_check);
-			return ;
-		}
-		if (get_time() - env->philo[i].last_ate > env->time_to_die
-			&& env->philo[i].last_ate != 0 && env->philo[i].is_eating == 0)
-		{
-			env->check_death = 1;
-			print("died", &env->philo[i]);
-			pthread_mutex_unlock(&env->mutex_check);
-			return ;
-		}
-		pthread_mutex_unlock(&env->mutex_check);
-	}
-}
-
-void	start_thread(char **av, t_env *env)
-{
-	int	i;
-
-	i = 0;
-	env->start_time = get_time();
 	while (i < ft_atoi(av[1]))
 	{
 		env->philo[i].current = i;
 		env->philo[i].env = env;
 		env->philo[i].last_ate = 0;
 		env->philo[i].meal_count = 0;
-		pthread_create(&env->philo[i].thread, NULL, &routine, &env->philo[i]);
+		env->philo[i].dead = 0;
 		i++;
 	}
-	i = -1;
-	while (env->check_death == 0)
-		check_death(env);
 }
 
-void	stop_thread(char **av, t_env *env)
+int	start_thread(char **av, t_env *env)
+{
+	int	i;
+
+	init_thread_content(av, env);
+	env->start_time = get_time();
+	if (pthread_create(&env->monitor_t, NULL, &monitor, &env->philo[0]))
+		return (1);
+	i = 0;
+	while (i < ft_atoi(av[1]))
+	{
+		if (pthread_create(&env->philo[i].thread, NULL,
+				&routine, &env->philo[i]))
+			return (1);
+		i++;
+	}
+	if (env->philo_num == 1)
+	{
+		(pthread_join(env->philo[0].supervisor, NULL));
+		(pthread_join(env->philo[0].thread, NULL));
+		(pthread_join(env->monitor_t, NULL));
+	}
+	return (0);
+}
+
+int	stop_thread(char **av, t_env *env)
 {
 	int	i;
 
 	i = 0;
+	(void) av;
+	(void) env;
 	while (i < ft_atoi(av[1]))
 	{
-		pthread_join(env->philo[i].thread, NULL);
+		if (pthread_join(env->philo[i].supervisor, NULL))
+			return (1);
+		if (pthread_join(env->philo[i].thread, NULL))
+			return (1);
 		i++;
 	}
+	if (pthread_join(env->monitor_t, NULL))
+		return (1);
+	return (0);
 }
 
-void	init_mutex(t_env *env, char **av)
+int	init_mutex(t_env *env, char **av)
 {
 	int	i;
 	int	philo_num;
 
 	philo_num = ft_atoi(av[1]);
-	pthread_mutex_init(&env->mutex_check, NULL);
+	if (pthread_mutex_init(&env->mutex_check, NULL))
+		return (1);
+	if (pthread_mutex_init(&env->mutex_print, NULL))
+		return (1);
 	i = -1;
 	while (++i < philo_num)
 	{
-		pthread_mutex_init(&env->mutex_fork[i], NULL);
-		pthread_mutex_init(&env->philo[i].mutex_philo, NULL);
+		if (pthread_mutex_init(&env->mutex_fork[i], NULL))
+			return (1);
+		if (pthread_mutex_init(&env->philo[i].mutex_philo, NULL))
+			return (1);
 	}
-	i = 1;
-	env->philo[0].l_fork = &env->mutex_fork[0];
-	env->philo[0].r_fork = &env->mutex_fork[philo_num - 1];
-	while (i < philo_num)
-	{
-		env->philo[i].l_fork = &env->mutex_fork[i];
-		env->philo[i].r_fork = &env->mutex_fork[i - 1];
-		i++;
-	}
+	handle_forks_pointers(env, philo_num);
+	return (0);
 }
 
-void	destroy_mutex(t_env *env, char **av)
+int	destroy_mutex(t_env *env, char **av)
 {
 	int	i;
 
 	i = -1;
-	pthread_mutex_destroy(&env->mutex_check);
 	while (++i < ft_atoi(av[1]))
 	{
-		pthread_mutex_destroy(&env->mutex_fork[i]);
-		pthread_mutex_destroy(&env->philo[i].mutex_philo);
+		if (pthread_mutex_destroy(&env->philo[i].mutex_philo))
+			return (1);
+		if (pthread_mutex_destroy(&env->mutex_fork[i]))
+			return (1);
 	}
+	if (pthread_mutex_destroy(&env->mutex_print))
+		return (1);
+	if (pthread_mutex_destroy(&env->mutex_check))
+		return (1);
 	free_all(env);
+	return (0);
 }
