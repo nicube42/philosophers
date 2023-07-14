@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philosophers.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ndiamant <ndiamant@student.42lausanne.c    +#+  +:+       +#+        */
+/*   By: ndiamant <ndiamant@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/23 09:09:41 by ndiamant          #+#    #+#             */
-/*   Updated: 2023/07/14 13:39:29 by ndiamant         ###   ########.fr       */
+/*   Updated: 2023/07/14 16:12:20 by ndiamant         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ void			drop_fork(t_philo *philo);
 
 void			check_all_meal(t_philo *philo);
 void			handle_forks_pointers(t_env *env, int philo_num);
+void			special_print(t_philo *philo);
 
 unsigned long	get_time(void);
 void			print(char *error, t_philo *philo);

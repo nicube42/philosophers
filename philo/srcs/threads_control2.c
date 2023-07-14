@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   threads_control2.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ndiamant <ndiamant@student.42lausanne.c    +#+  +:+       +#+        */
+/*   By: ndiamant <ndiamant@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/14 12:56:29 by ndiamant          #+#    #+#             */
-/*   Updated: 2023/07/14 14:46:56 by ndiamant         ###   ########.fr       */
+/*   Updated: 2023/07/14 16:12:33 by ndiamant         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,6 @@ void	*supervisor(void *arg)
 	philo = (t_philo *)arg;
 	while (1)
 	{
-		pthread_mutex_lock(&philo->env->mutex_check);
-		if (philo->env->check_death)
-			break ;
-		pthread_mutex_unlock(&philo->env->mutex_check);
 		pthread_mutex_lock(&philo->mutex_philo);
 		if (get_time() - philo->last_ate > philo->env->time_to_die
 			&& philo->last_ate != 0 && philo->is_eating == 0)
@@ -32,10 +28,14 @@ void	*supervisor(void *arg)
 			philo->env->check_death = 1;
 			pthread_mutex_unlock(&philo->env->mutex_print);
 			pthread_mutex_unlock(&philo->mutex_philo);
-			print("died", philo);
+			special_print(philo);
 			break ;
 		}
 		check_all_meal(philo);
+		pthread_mutex_lock(&philo->env->mutex_check);
+		if (philo->env->check_death)
+			break ;
+		pthread_mutex_unlock(&philo->env->mutex_check);
 	}
 	pthread_mutex_unlock(&philo->env->mutex_check);
 	return (0);
@@ -112,8 +112,10 @@ void	handle_forks_pointers(t_env *env, int philo_num)
 void	check_all_meal(t_philo *philo)
 {
 	pthread_mutex_lock(&philo->env->mutex_check);
+	pthread_mutex_lock(&philo->env->mutex_print);
 	if (philo->meal_count == philo->env->meal_max)
 		philo->env->full_meal++;
+	pthread_mutex_unlock(&philo->env->mutex_print);
 	pthread_mutex_unlock(&philo->env->mutex_check);
 	pthread_mutex_unlock(&philo->mutex_philo);
 }

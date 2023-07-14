@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_behavior.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ndiamant <ndiamant@student.42lausanne.c    +#+  +:+       +#+        */
+/*   By: ndiamant <ndiamant@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 13:27:59 by ndiamant          #+#    #+#             */
-/*   Updated: 2023/07/14 14:47:40 by ndiamant         ###   ########.fr       */
+/*   Updated: 2023/07/14 15:53:16 by ndiamant         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,14 +57,6 @@ void	one_philo(t_philo *philo)
 void	philo_eating(t_philo *philo)
 {	
 	take_fork(philo);
-	pthread_mutex_lock(&philo->env->mutex_check);
-	if (philo->env->check_death != 0)
-	{
-		pthread_mutex_unlock(&philo->env->mutex_check);
-		drop_fork(philo);
-		return ;
-	}
-	pthread_mutex_unlock(&philo->env->mutex_check);
 	if (philo->env->philo_num != 1)
 	{
 		pthread_mutex_lock(&philo->mutex_philo);
@@ -80,5 +72,13 @@ void	philo_eating(t_philo *philo)
 	}
 	else
 		one_philo(philo);
+	pthread_mutex_lock(&philo->env->mutex_check);
+	if (philo->env->check_death != 0)
+	{
+		pthread_mutex_unlock(&philo->env->mutex_check);
+		drop_fork(philo);
+		return ;
+	}
+	pthread_mutex_unlock(&philo->env->mutex_check);
 	drop_fork(philo);
 }

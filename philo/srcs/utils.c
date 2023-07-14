@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ndiamant <ndiamant@student.42lausanne.c    +#+  +:+       +#+        */
+/*   By: ndiamant <ndiamant@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 13:28:57 by ndiamant          #+#    #+#             */
-/*   Updated: 2023/07/14 13:03:45 by ndiamant         ###   ########.fr       */
+/*   Updated: 2023/07/14 16:11:58 by ndiamant         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,17 @@ unsigned long	get_time(void)
 void	print(char *error, t_philo *philo)
 {
 	pthread_mutex_lock(&philo->env->mutex_print);
-	if ((philo->env->check_death == 0 || !ft_strncmp(error, "is eating", 9))
-		|| !ft_strncmp(error, "died", 4))
+	if ((philo->env->check_death == 0 || philo->env->full_meal == 1))
 		printf("%ld %d %s\n", get_time() - philo->env->start_time, philo->current
 			+ 1, error);
+	pthread_mutex_unlock(&philo->env->mutex_print);
+}
+
+void	special_print(t_philo *philo)
+{
+	pthread_mutex_lock(&philo->env->mutex_print);
+	printf("%ld %d %s\n", get_time() - philo->env->start_time,
+		philo->current + 1, "died");
 	pthread_mutex_unlock(&philo->env->mutex_print);
 }
 
